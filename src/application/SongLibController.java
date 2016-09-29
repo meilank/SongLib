@@ -12,6 +12,7 @@ public class SongLibController
 {
 	@FXML Button add;
 	@FXML Button delete;
+	@FXML Button edit;
 	@FXML TextField name;
 	@FXML TextField artist;
 	@FXML TextField album;
@@ -24,7 +25,8 @@ public class SongLibController
 	
 	boolean ifFirst= true;
 	
-	public static <T extends Comparable<T>> void BubbleSortAL(ObservableList<Song> obsList2)
+	public static <T extends Comparable<T>> void 
+		BubbleSortAL(ObservableList<Song> obsList2)
 	{
 		Song temp;
 		for (int i=0;i<obsList2.size();i++)
@@ -47,19 +49,28 @@ public class SongLibController
 		
 		if(b== add)
 		{
-			if (!name.equals("") || !artist.equals(""))
+			while (true)
 			{
-				Song song= new Song(name.getText(), artist.getText(), album.getText(), year.getText());
-
-				obsList.add(song);
-				BubbleSortAL(obsList);
-				list.setItems(obsList);
-			}
-			if (ifFirst)
-			{
-				ifFirst= false;
-				obsList.remove(0);
-				list.getSelectionModel().select(0);
+				if (name.getText().trim().isEmpty() ||
+						artist.getText().trim().isEmpty())
+				{	
+					continue;
+				}
+				else
+				{
+					Song song= new Song(name.getText(), artist.getText(), 
+							album.getText(), year.getText());
+					obsList.add(song);
+					BubbleSortAL(obsList);
+					list.setItems(obsList);
+					if (ifFirst)
+					{
+						ifFirst= false;
+						obsList.remove(0);
+						list.getSelectionModel().select(0);
+					}
+					break;
+				}
 			}
 		}
 		else if (b== delete)
