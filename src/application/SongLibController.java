@@ -1,10 +1,15 @@
 package application;
 
+import java.util.Optional;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -24,7 +29,7 @@ public class SongLibController
 			FXCollections.observableArrayList(s);
 	
 	boolean ifFirst= true;
-	
+
 	public static <T extends Comparable<T>> void 
 		BubbleSortAL(ObservableList<Song> obsList2)
 	{
@@ -41,37 +46,54 @@ public class SongLibController
                 }
             }
         }
-	}	
+	}
 	
 	public void manageItems(ActionEvent e)
 	{
 		Button b= (Button)e.getSource();
 		
-		if(b== add)
-		{
-			while (true)
+		int index= list.getSelectionModel()
+				.getSelectedIndex();
+		
+		if(b== add && !(name.getText().trim().isEmpty() ||
+					artist.getText().trim().isEmpty()))
+		{	
+			Song song= new Song(name.getText(), artist.getText(), 
+					album.getText(), year.getText());
+			
+			if (song.linearSearch(obsList)== 0)
 			{
-				if (name.getText().trim().isEmpty() ||
-						artist.getText().trim().isEmpty())
-				{	
-					continue;
-				}
-				else
+				obsList.add(song);
+				BubbleSortAL(obsList);
+				list.setItems(obsList);
+				
+				if (ifFirst)
 				{
-					Song song= new Song(name.getText(), artist.getText(), 
-							album.getText(), year.getText());
-					obsList.add(song);
-					BubbleSortAL(obsList);
-					list.setItems(obsList);
-					if (ifFirst)
-					{
-						ifFirst= false;
-						obsList.remove(0);
-						list.getSelectionModel().select(0);
-					}
-					break;
+					ifFirst= false;
+					obsList.remove(0);
+					list.getSelectionModel().select(0);
 				}
+				
+				list.getSelectionModel()
+				.select(obsList.lastIndexOf(song));
+				
+				Song s2= obsList.get(obsList.lastIndexOf(song));
+				name.setText(s2.title);
+				artist.setText(s2.artist);
+				album.setText(s2.album);
+				year.setText(s2.year);
+				
+				s.title= new String(s2.title);
+				s.artist= new String(s2.artist);
 			}
+			else
+			{
+				Dialog<String> dialog= new Dialog<String>();
+				dialog.setContentText("This song is a duplicate!");
+				dialog.show();
+			}
+			
+						
 		}
 		else if (b== delete)
 		{
@@ -83,6 +105,55 @@ public class SongLibController
 				obsList.remove(i);	
 			}
 		}
+		else if (b== edit && !obsList.isEmpty())
+		{
+			
+			Song selectedSong= null;
+			
+			selectedSong=s.editSearch(obsList);
+			
+			if(selectedSong != null)
+			{
+				selectedSong.title= name.getText();
+				selectedSong.artist= artist.getText();
+				selectedSong.album= album.getText();
+				selectedSong.year= year.getText();
+
+				BubbleSortAL(obsList);
+				
+				/*
+				 * this is where weird stuff happens
+				 */
+				Song temp= new Song("", "", "", "");
+				obsList.add(temp);
+				BubbleSortAL(obsList);
+				
+				list.setItems(obsList);
+				obsList.remove(0);
+				
+				list.setItems(obsList);
+				
+				list.getSelectionModel()
+				.select(obsList.lastIndexOf(selectedSong));
+			}
+		}
+
+
 	}
 	
+	public void onSelected(MouseEvent e)
+	{
+		int index= list.getSelectionModel()
+				.getSelectedIndex();
+		
+		Song s2= obsList.get(index);
+		name.setText(s2.title);
+		artist.setText(s2.artist);
+		album.setText(s2.album);
+		year.setText(s2.year);
+		
+		s.title= new String(s2.title);
+		s.artist= new String(s2.artist);
+	}
+
 }

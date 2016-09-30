@@ -1,5 +1,7 @@
 package application;
 
+import javafx.collections.ObservableList;
+
 public class Song 
 {
 
@@ -26,7 +28,9 @@ public class Song
 		if (s == null || (!(s instanceof Song))) {
 				 return -1;
 		}
+		
 		int x= (this.title).compareTo(((Song) s).title);
+		
 		if (x!= 0)
 		{
 			return x;
@@ -35,6 +39,31 @@ public class Song
 		{
 			return (this.artist).compareTo(((Song) s).artist);
 		}
+	}
+	
+	public int linearSearch(ObservableList<Song> list)
+	{
+		for (Song song : list)
+		{
+			if (song.compareTo(this)== 0)
+			{
+				return 1;
+			}
+		}
+		return 0;
+	}
+	
+	public Song editSearch(ObservableList<Song> list){
+		
+		for (Song song : list)
+		{
+			if (song.compareTo(this)== 0)
+			{
+				return song;
+			}
+		}
+
+		return(null);
 	}
 	
 }
