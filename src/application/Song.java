@@ -1,3 +1,6 @@
+
+// code written by:		Meilan Keshava & Nicholas Konopka
+
 package application;
 
 import javafx.collections.ObservableList;
@@ -14,8 +17,24 @@ public class Song
 	{
 		this.title= title;
 		this.artist= artist;
-		this.album= album;
-		this.year= year;
+		
+		if (album.isEmpty())
+		{
+			this.album= " ";
+		}
+		else
+		{
+			this.album= album;
+		}
+		
+		if (year.isEmpty())
+		{
+			this.year= " ";
+		}
+		else
+		{
+			this.year= year;
+		}
 	}
 	
 	public String toString()
@@ -45,7 +64,7 @@ public class Song
 	{
 		for (Song song : list)
 		{
-			if (song.compareTo(this)== 0)
+			if (song.compareTo(this) == 0)
 			{
 				return 1;
 			}

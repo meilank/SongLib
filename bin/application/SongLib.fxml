@@ -24,8 +24,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextArea prefHeight="200.0" prefWidth="200.0" text="Song List" />
-            <TextArea prefHeight="200.0" prefWidth="200.0" text="Song Details" GridPane.columnIndex="1" />
+            <Label prefHeight="200.0" prefWidth="200.0" text="                      Song List" />
+            <Label prefHeight="200.0" prefWidth="200.0" text="                        Song Details" GridPane.columnIndex="1" />
             <ListView fx:id="list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" onMouseClicked= "#onSelected" />
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
               <columnConstraints>
@@ -60,8 +60,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="delete" mnemonicParsing="false" onAction="#manageItems" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Button fx:id="add" mnemonicParsing="false" onAction="#manageItems" text="+" GridPane.rowIndex="1" />
+                  <Button fx:id="delete" mnemonicParsing="false" onAction="#manageItems" text="Delete" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="add" mnemonicParsing="false" onAction="#manageItems" text="Add" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             <Button fx:id="edit" mnemonicParsing="false"  onAction="#manageItems" text="Edit" GridPane.columnIndex="1" GridPane.rowIndex="2" />

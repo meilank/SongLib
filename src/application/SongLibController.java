@@ -1,14 +1,15 @@
-package application;
 
-import java.util.Optional;
+// code written by:		Meilan Keshava & Nicholas Konopka
+
+package application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,8 +25,8 @@ public class SongLibController
 	@FXML TextField year;
 	@FXML ListView<Song> list;
 	
-	Song s= new Song("", "", "", "");
-	ObservableList<Song> obsList= 
+	static Song s= new Song(" ", " ", " ", " ");
+	static ObservableList<Song> obsList= 
 			FXCollections.observableArrayList(s);
 	
 	boolean ifFirst= true;
@@ -51,15 +52,12 @@ public class SongLibController
 	public void manageItems(ActionEvent e)
 	{
 		Button b= (Button)e.getSource();
-		
-		int index= list.getSelectionModel()
-				.getSelectedIndex();
-		
+				
 		if(b== add && !(name.getText().trim().isEmpty() ||
 					artist.getText().trim().isEmpty()))
 		{	
-			Song song= new Song(name.getText(), artist.getText(), 
-					album.getText(), year.getText());
+			Song song= new Song(name.getText().trim().toLowerCase(), artist.getText().trim().toLowerCase(), 
+					album.getText().trim().toLowerCase(), year.getText().trim().toLowerCase());
 			
 			if (song.linearSearch(obsList)== 0)
 			{
@@ -88,9 +86,11 @@ public class SongLibController
 			}
 			else
 			{
-				Dialog<String> dialog= new Dialog<String>();
-				dialog.setContentText("This song is a duplicate!");
-				dialog.show();
+				Alert a = new Alert(AlertType.ERROR);
+				a.setTitle("Error!");
+				a.setHeaderText(null);
+				a.setContentText("This song is a duplicate!");
+				a.show();
 			}
 			
 						
@@ -103,42 +103,78 @@ public class SongLibController
 						.getSelectionModel()
 						.getSelectedIndex();
 				obsList.remove(i);	
+				
+				if (!obsList.isEmpty())
+				{
+					if(i>0)
+						i--;
+	
+					Song s2= obsList.get(i);
+					name.setText(s2.title);
+					artist.setText(s2.artist);
+					album.setText(s2.album);
+					year.setText(s2.year);
+					
+					s.title= new String(s2.title);
+					s.artist= new String(s2.artist);
+				}
+				
+			}
+			if (obsList.isEmpty())
+			{
+				name.clear();
+				artist.clear();
+				album.clear();
+				year.clear();
+				
 			}
 		}
 		else if (b== edit && !obsList.isEmpty())
 		{
 			
-			Song selectedSong= null;
+			Song selectedSong = null;
 			
 			selectedSong=s.editSearch(obsList);
+			int errorCheck = (new Song(name.getText().trim().toLowerCase(), artist.getText().trim().toLowerCase(), "", "")).linearSearch(obsList);
 			
 			if(selectedSong != null)
 			{
-				selectedSong.title= name.getText();
-				selectedSong.artist= artist.getText();
-				selectedSong.album= album.getText();
-				selectedSong.year= year.getText();
-
-				BubbleSortAL(obsList);
+				if(errorCheck==0||(errorCheck==1&&selectedSong.title.compareTo(name.getText().trim().toLowerCase())==0&&selectedSong.artist.compareTo(artist.getText().trim().toLowerCase())==0)){
 				
-				/*
-				 * this is where weird stuff happens
-				 */
-				Song temp= new Song("", "", "", "");
-				obsList.add(temp);
-				BubbleSortAL(obsList);
+					selectedSong.title= name.getText().trim().toLowerCase();
+					selectedSong.artist= artist.getText().trim().toLowerCase();
+					selectedSong.album= album.getText().trim().toLowerCase();
+					selectedSong.year= year.getText().trim().toLowerCase();
+	
+					BubbleSortAL(obsList);
+					
+					/*
+					 * this is where weird stuff happens
+					 */
+					Song temp= new Song("", "", "", "");
+					obsList.add(temp);
+					BubbleSortAL(obsList);
+					
+					list.setItems(obsList);
+					obsList.remove(0);
+					
+					list.setItems(obsList);
+					
+					list.getSelectionModel()
+					.select(obsList.lastIndexOf(selectedSong));
+				}
+				else
+				{
+					Alert a = new Alert(AlertType.ERROR);
+					a.setTitle("Error!");
+					a.setHeaderText(null);
+					a.setContentText("Your edit will make this song a duplicate!");
+					a.show();
+				}
 				
-				list.setItems(obsList);
-				obsList.remove(0);
 				
-				list.setItems(obsList);
-				
-				list.getSelectionModel()
-				.select(obsList.lastIndexOf(selectedSong));
 			}
 		}
-
-
 	}
 	
 	public void onSelected(MouseEvent e)
@@ -155,5 +191,11 @@ public class SongLibController
 		s.title= new String(s2.title);
 		s.artist= new String(s2.artist);
 	}
-
+	
+	public static ObservableList<Song> getObsList() { return obsList; }
+	
+	public static void onInit(ObservableList<Song> fromFileList)
+	{
+		obsList= fromFileList;
+	}
 }
