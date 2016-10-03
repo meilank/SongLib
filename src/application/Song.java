@@ -20,7 +20,7 @@ public class Song
 		
 		if (album.isEmpty())
 		{
-			this.album= " ";
+			this.album= "  ";
 		}
 		else
 		{
@@ -29,7 +29,7 @@ public class Song
 		
 		if (year.isEmpty())
 		{
-			this.year= " ";
+			this.year= "  ";
 		}
 		else
 		{

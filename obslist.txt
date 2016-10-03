@@ -1,4 +1,2 @@
-a	a	a	a
-a	ab	a	 
-aaaa	aa	 	 
-b	a	a	a
+aaa	aaa	  	  
+b	a		

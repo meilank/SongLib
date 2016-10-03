@@ -3,6 +3,14 @@
 
 package application;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -19,14 +27,15 @@ public class SongLibController
 	@FXML Button add;
 	@FXML Button delete;
 	@FXML Button edit;
+	@FXML Button import1;
 	@FXML TextField name;
 	@FXML TextField artist;
 	@FXML TextField album;
 	@FXML TextField year;
 	@FXML ListView<Song> list;
 	
-	static Song s= new Song(" ", " ", " ", " ");
-	static ObservableList<Song> obsList= 
+	Song s= new Song(" ", " ", " ", " ");
+	ObservableList<Song> obsList= 
 			FXCollections.observableArrayList(s);
 	
 	boolean ifFirst= true;
@@ -139,7 +148,8 @@ public class SongLibController
 			
 			if(selectedSong != null)
 			{
-				if(errorCheck==0||(errorCheck==1&&selectedSong.title.compareTo(name.getText().trim().toLowerCase())==0&&selectedSong.artist.compareTo(artist.getText().trim().toLowerCase())==0)){
+				if(errorCheck==0||(errorCheck==1&&selectedSong.title.compareTo(name.getText().trim().toLowerCase())==0&&selectedSong.artist.compareTo(artist.getText().trim().toLowerCase())==0))
+				{
 				
 					selectedSong.title= name.getText().trim().toLowerCase();
 					selectedSong.artist= artist.getText().trim().toLowerCase();
@@ -151,7 +161,7 @@ public class SongLibController
 					/*
 					 * this is where weird stuff happens
 					 */
-					Song temp= new Song("", "", "", "");
+					Song temp= new Song(" ", " ", "  ", "  ");
 					obsList.add(temp);
 					BubbleSortAL(obsList);
 					
@@ -175,6 +185,69 @@ public class SongLibController
 				
 			}
 		}
+		
+		if (!ifFirst)
+		{
+			onClose();
+		}
+		
+	}
+	
+	public void onImport(ActionEvent e) throws IOException
+	{
+		Button b= (Button)e.getSource();
+		
+		if (b== import1)
+		{			
+			File f = new File("obsList.txt");
+			
+			if(!f.exists()) 
+			{ 
+				return;
+			}
+			
+			BufferedReader br = new BufferedReader(new FileReader("obslist.txt"));
+			try {
+				String s;
+				
+				while ((s= br.readLine())!= null)
+				{
+					String[] arr= s.split("\t");
+					
+				    Song song= new Song(arr[0], arr[1], arr[2], arr[3]);
+				    obsList.add(song);
+				}
+				
+				if (ifFirst)
+				{
+					ifFirst= false;
+					obsList.remove(0);
+					list.getSelectionModel().select(0);
+				}
+				list.setItems(obsList);
+			} finally {
+			    br.close();
+			}
+		}
+	}
+	
+	private void onClose()
+	{
+		try {
+			PrintWriter writer= new PrintWriter("obslist.txt", "UTF-8");
+			
+			for (Song s: obsList)
+			{
+				writer.println(s.title + "\t" + s.artist + "\t" + s.album + "\t" + s.year);
+			}
+			writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void onSelected(MouseEvent e)
@@ -190,12 +263,5 @@ public class SongLibController
 		
 		s.title= new String(s2.title);
 		s.artist= new String(s2.artist);
-	}
-	
-	public static ObservableList<Song> getObsList() { return obsList; }
-	
-	public static void onInit(ObservableList<Song> fromFileList)
-	{
-		obsList= fromFileList;
 	}
 }
