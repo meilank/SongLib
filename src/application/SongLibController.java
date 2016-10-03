@@ -153,8 +153,24 @@ public class SongLibController
 				
 					selectedSong.title= name.getText().trim().toLowerCase();
 					selectedSong.artist= artist.getText().trim().toLowerCase();
-					selectedSong.album= album.getText().trim().toLowerCase();
-					selectedSong.year= year.getText().trim().toLowerCase();
+					if (album.getText().trim().isEmpty())
+					{
+						selectedSong.album= "  ";
+					}
+					else
+					{
+						selectedSong.album= album.getText().trim().toLowerCase();
+					}
+					
+					if (year.getText().trim().isEmpty())
+					{
+						System.out.println("bleh");
+						selectedSong.year= "  ";
+					}
+					else
+					{
+						selectedSong.year= year.getText().trim().toLowerCase();
+					}
 	
 					BubbleSortAL(obsList);
 					

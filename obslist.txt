@@ -1,2 +1,2 @@
-aaa	aaa	  	  
-b	a		
+aaa	a	  	  
+abab	a	  	  
